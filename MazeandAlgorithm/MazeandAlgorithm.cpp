@@ -20,19 +20,54 @@ public:
 	}
 
 	//Determine Beginning of Maze
+	void genBeginning()
+	{
 
+		int RoworCollumns = 1 + (rand() % 2);
+		Pos Entrance;
+		if (RoworCollumns == 1)
+		{
+			do
+			{
+				Entrance.row = 1 + (rand() % 5);
+				Entrance.collumn = 1 + (rand() % 5);
+			} while (Entrance.row != 1 && Entrance.row != 5);
+		}
+		if (RoworCollumns == 2)
+		{
+			do
+			{
+				Entrance.row = 1 + (rand() % 5);
+				Entrance.collumn = 1 + (rand() % 5);
+			} while (Entrance.collumn != 1 && Entrance.collumn != 5);
+		}
+		this->row = Entrance.row;
+		this->collumn = Entrance.collumn;
+	}
 
 
 	//Determine Ending of Maze
 	void genExit()
 	{
-		Pos Exit;
-		do
-		{
-			Exit.row = 1 + (rand() % 5);
-			Exit.collumn = 1 + (rand() % 5);
-		} while (Exit.row != 1 && Exit.row != 5 || Exit.collumn != 1 && Exit.collumn != 5);
 
+		int RoworCollumns = 1 + (rand() % 2);
+		Pos Exit;
+		if (RoworCollumns == 1)
+		{
+			do
+			{
+				Exit.row = 1 + (rand() % 5);
+				Exit.collumn = 1 + (rand() % 5);
+			} while (Exit.row != 1 && Exit.row != 5);
+		}
+		if (RoworCollumns == 2)
+		{
+			do
+			{
+				Exit.row = 1 + (rand() % 5);
+				Exit.collumn = 1 + (rand() % 5);
+			} while (Exit.collumn != 1 && Exit.collumn != 5);
+		}
 		this->row = Exit.row;
 		this->collumn = Exit.collumn;
 	}
@@ -43,6 +78,8 @@ public:
 class Maze {
 protected:
 	std::array<char, 25> mazeField;
+	int Start;
+	int End;
 public:
 	//Create/Randomize Maze
 	Maze()
@@ -80,15 +117,40 @@ public:
 		this->mazeField[pos] = type;
 
 	}
+	void setExit(int exit)
+	{
+
+		this->mazeField[exit] = '$';
+
+	}
+	void setStart(int start)
+	{
+
+		this->mazeField[start] = '=';
+
+	}
 
 };
 
 
 void main()
 {
-	Maze newMaze;
-	Pos Exit;
-	Exit.genExit();
-	newMaze.setCharMaze(Exit.returnPos(), '$');
-	newMaze.PrintMaze();
+	while(!GetAsyncKeyState(VK_END))
+	{
+		if (GetAsyncKeyState(VK_INSERT))
+		{
+			Maze newMaze;
+			Pos Exit, Entrance;
+			do
+			{
+				Exit.genExit();
+				Entrance.genBeginning();
+			} while (Exit.returnPos() == Entrance.returnPos());
+			newMaze.setExit(Exit.returnPos());
+			newMaze.setStart(Entrance.returnPos());
+			newMaze.PrintMaze();
+			std::cout << std::endl;
+		}
+	}
+
 }
