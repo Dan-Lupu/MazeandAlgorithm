@@ -4,6 +4,74 @@
 #include <vector>
 #include <array>
 
+class Maze {
+protected:
+	std::array<char, 25> mazeField;
+	int Start;
+	int End;
+public:
+	//Create/Randomize Maze
+	Maze()
+	{
+
+		for (int i = 0; i < this->mazeField.size(); i++)
+		{
+			this->mazeField[i] = '#';
+		}
+	}
+	//Destroy Maze
+	~Maze()
+	{
+		for (int i = 0; i < this->mazeField.size(); i++)
+		{
+			this->mazeField[i] = '#';
+		}
+
+	}
+
+	void PrintMaze()
+	{
+		for (int i = 0; i < this->mazeField.size() / 5; i++)
+		{
+			for (int j = 0; j < this->mazeField.size() / 5; j++)
+			{
+				std::cout << this->mazeField[i * 5 + j];
+			}
+			std::cout << std::endl;
+		}
+	}
+	void setCharMaze(int pos, char type)
+	{
+
+		this->mazeField[pos] = type;
+
+	}
+	void setExit(int exit)
+	{
+
+		this->mazeField[exit] = '$';
+
+	}
+	void setStart(int start)
+	{
+
+		this->mazeField[start] = '=';
+
+	}
+	bool checkField(int pos)
+	{
+		if (this->mazeField[pos] = '#')
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+};
+
 
 struct Pos
 {
@@ -72,63 +140,25 @@ public:
 		this->collumn = Exit.collumn;
 	}
 
-
-};
-
-class Maze {
-protected:
-	std::array<char, 25> mazeField;
-	int Start;
-	int End;
-public:
-	//Create/Randomize Maze
-	Maze()
+	//Generate Walls
+	std::vector<Pos> genWalls(int numberOfWalls, Maze maze)
 	{
-
-		for (int i = 0; i < this->mazeField.size(); i++)
+		Pos Temp;
+		std::vector<Pos> theWalls;
+		for (int i = 0; i < numberOfWalls; i++)
 		{
-			this->mazeField[i] = '#';
-		}
-	}
-	//Destroy Maze
-	~Maze()
-	{
-		for (int i = 0; i < this->mazeField.size(); i++)
-		{
-			this->mazeField[i] = '#';
-		}
-
-	}
-
-	void PrintMaze()
-	{
-		for (int i = 0; i < this->mazeField.size() / 5; i++)
-		{
-			for (int j = 0; j < this->mazeField.size() / 5; j++)
+			do
 			{
-				std::cout << this->mazeField[i * 5 + j];
-			}
-			std::cout << std::endl;
+				Temp.row = 1 + (rand() % 5);
+				Temp.collumn = 1 + (rand() % 5);
+			} while (maze.checkField(Temp.returnPos()) == false);
+			theWalls.insert(theWalls.begin(), Temp);
 		}
-	}
-	void setCharMaze(int pos, char type)
-	{
 
-		this->mazeField[pos] = type;
+		return theWalls;
 
 	}
-	void setExit(int exit)
-	{
 
-		this->mazeField[exit] = '$';
-
-	}
-	void setStart(int start)
-	{
-
-		this->mazeField[start] = '=';
-
-	}
 
 };
 
@@ -140,7 +170,8 @@ void main()
 		if (GetAsyncKeyState(VK_INSERT))
 		{
 			Maze newMaze;
-			Pos Exit, Entrance;
+			Pos Exit, Entrance, Wall;
+			std::vector<Pos> Walls = Wall.genWalls(3, newMaze);
 			do
 			{
 				Exit.genExit();
@@ -148,6 +179,10 @@ void main()
 			} while (Exit.returnPos() == Entrance.returnPos());
 			newMaze.setExit(Exit.returnPos());
 			newMaze.setStart(Entrance.returnPos());
+			for (Pos i : Walls)
+			{
+				newMaze.setCharMaze(i.returnPos(), '|');
+			}
 			newMaze.PrintMaze();
 			std::cout << std::endl;
 		}
